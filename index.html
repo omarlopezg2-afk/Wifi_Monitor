@@ -1,158 +1,154 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WiFi Monitor — Mira quién está usando tu WiFi</title>
-<meta name="description" content="WiFi Monitor detecta cada dispositivo conectado a tu red, mide tu velocidad real y te avisa si aparece un equipo que no reconoces. App de escritorio, disponible en Microsoft Store con 7 días de prueba gratis.">
-<meta name="keywords" content="monitor wifi casa, detectar dispositivos wifi, detectar intrusos red wifi, quien usa mi wifi, monitor de red escritorio">
-<meta property="og:title" content="WiFi Monitor — Mira quién está usando tu WiFi">
-<meta property="og:description" content="Detecta cada dispositivo en tu red, mide tu velocidad y recibe alertas si algo no cuadra. Disponible en Microsoft Store.">
-<meta property="og:type" content="website">
-<!-- Si usas un dominio propio en vez de GitHub Pages, actualiza esta URL -->
-<meta property="og:url" content="https://omarlopezg2-afk.github.io/Wifi_Monitor/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WiFi Monitor — Mira exactamente quién está usando tu WiFi (Windows)</title>
+<meta name="description" content="WiFi Monitor detecta cada dispositivo conectado a tu red con el fabricante identificado, guarda 7 días de tráfico, mide tu velocidad real y te avisa cuando aparece un equipo que no reconoces. App para Windows, sin configurar el módem.">
 <link rel="canonical" href="https://omarlopezg2-afk.github.io/Wifi_Monitor/">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="icon" href="assets/icono.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_LA">
+<meta property="og:title" content="Mira exactamente quién está usando tu WiFi">
+<meta property="og:description" content="Dispositivos conectados con fabricante, 7 días de tráfico, alertas y test de velocidad. Para Windows.">
+<meta property="og:image" content="https://omarlopezg2-afk.github.io/Wifi_Monitor/assets/captura-dispositivos.jpg">
+<meta property="og:url" content="https://omarlopezg2-afk.github.io/Wifi_Monitor/">
+<meta name="twitter:card" content="summary_large_image">
+
 <style>
   :root{
-    --bg: #EEF3F8;
-    --bg-line: #DCE6F0;
-    --surface: #FFFFFF;
-    --border: #D7E1EC;
-    --ink: #0F1E33;
-    --muted: #5B6B82;
-    --signal: #009E8A;
-    --signal-dark: #007A6B;
-    --alert: #E8622C;
-    --radius: 14px;
+    --bg:#0a0f1a; --bg2:#0f172a; --card:#131c2e; --line:#22304a;
+    --fg:#e8eefb; --mut:#93a3bd; --acc:#38a6f0; --acc2:#1e6fd9; --ok:#34d399;
+
+    /* alias que usa el SVG del radar (se conservan los nombres originales) */
+    --signal:var(--acc); --surface:var(--card); --ink:var(--fg);
+    --muted:var(--mut); --border:var(--line); --alert:#f8705f;
+
+    --r:14px; --maxw:1080px;
+    --mono:ui-monospace,"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,monospace;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
-    background:
-      repeating-linear-gradient(0deg, transparent, transparent 39px, var(--bg-line) 39px, var(--bg-line) 40px),
-      repeating-linear-gradient(90deg, transparent, transparent 39px, var(--bg-line) 39px, var(--bg-line) 40px),
-      var(--bg);
-    color: var(--ink);
-    font-family: 'IBM Plex Sans', sans-serif;
-    line-height: 1.55;
+    margin:0;background:radial-gradient(1200px 600px at 50% -10%,#12233d 0%,transparent 60%),var(--bg);
+    color:var(--fg);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; letter-spacing:-0.01em; }
-  .mono{ font-family:'IBM Plex Mono', monospace; }
-  a{ color:inherit; }
-  .wrap{ max-width: 1120px; margin:0 auto; padding:0 28px; }
-
-  /* NAV */
-  nav{ display:flex; align-items:center; justify-content:space-between; padding:22px 0; }
-  .brand{ display:flex; align-items:center; gap:10px; font-family:'Space Grotesk'; font-weight:700; font-size:1.15rem; text-decoration:none; }
-  .brand .dot{ width:10px; height:10px; border-radius:50%; background:var(--signal); box-shadow:0 0 0 4px rgba(0,158,138,0.15); }
-  .nav-links{ display:flex; align-items:center; gap:22px; }
-  .nav-links a{ text-decoration:none; color:var(--muted); font-size:0.95rem; font-weight:500; }
-  .nav-links a:hover{ color:var(--ink); }
+  a{color:var(--acc);text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  header{padding:18px 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,15,26,.86);backdrop-filter:blur(8px);z-index:10}
+  header .wrap{display:flex;align-items:center;gap:12px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:650}
+  .brand img{width:28px;height:28px;border-radius:8px}
   .btn{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:12px 20px; border-radius:10px; font-weight:600; font-size:0.95rem;
-    text-decoration:none; border:1.5px solid transparent; transition: transform .15s ease, box-shadow .15s ease;
+    display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--acc),var(--acc2));
+    color:#fff;font-weight:650;padding:11px 18px;border-radius:10px;border:1px solid #2b7fd4;
+    box-shadow:0 6px 20px rgba(56,166,240,.22)
   }
-  .btn:focus-visible{ outline:2px solid var(--signal); outline-offset:2px; }
-  .btn-primary{ background:var(--ink); color:#fff; }
-  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 6px 16px rgba(15,30,51,0.25); }
-  .btn-ghost{ border-color:var(--border); color:var(--ink); background:transparent; }
-  .btn-ghost:hover{ border-color:var(--ink); }
-  .btn-sm{ padding:9px 14px; font-size:0.88rem; }
+  .btn:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg);box-shadow:none}
+  .sm{padding:8px 13px;font-size:.92rem}
 
-  /* HERO */
-  .hero{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap:48px; align-items:center; padding:56px 0 72px; }
-  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono'; font-size:0.78rem; color:var(--signal-dark); background:rgba(0,158,138,0.09); border:1px solid rgba(0,158,138,0.25); padding:6px 12px; border-radius:999px; margin-bottom:20px; }
-  .hero h1{ font-size:2.75rem; line-height:1.12; margin-bottom:18px; }
-  .hero p.lead{ color:var(--muted); font-size:1.12rem; max-width:46ch; margin-bottom:30px; }
-  .cta-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  h1{font-size:clamp(1.8rem,4.6vw,3rem);line-height:1.14;margin:0 0 14px;letter-spacing:-.6px}
+  h2{font-size:clamp(1.25rem,2.6vw,1.85rem);margin:0 0 12px;letter-spacing:-.3px}
+  h3{font-size:1.05rem;margin:0 0 6px}
+  p{margin:0 0 14px}
+  .mut{color:var(--mut)}
+  .lead{font-size:1.1rem;max-width:56ch}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+  .eyebrow::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);
+    box-shadow:0 0 0 4px rgba(56,166,240,.16)}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--acc);margin-bottom:8px}
 
-  /* RADAR SVG */
-  .radar-wrap{ display:flex; justify-content:center; }
-  svg.radar{ width:100%; max-width:440px; height:auto; }
-  .ring{ fill:none; stroke:var(--signal); stroke-width:1.5; stroke-dasharray:4 6; opacity:0.35; transform-box:fill-box; transform-origin:center; animation: pulse 4s ease-in-out infinite; }
-  .ring2{ animation-delay:.6s; }
-  .ring3{ animation-delay:1.2s; }
-  @keyframes pulse{ 0%,100%{ transform:scale(1); opacity:.35; } 50%{ transform:scale(1.045); opacity:.6; } }
-  .sweep{ transform-box:fill-box; transform-origin:center; animation: spin 7s linear infinite; }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  .node-link{ stroke:var(--border); stroke-width:1.5; stroke-dasharray:3 4; }
-  .node-dot{ fill:var(--surface); stroke:var(--signal); stroke-width:2.5; }
-  .node-dot.warn{ stroke:var(--alert); }
-  .node-label{ font-family:'IBM Plex Mono'; font-size:10.5px; fill:var(--muted); }
-  .node-label.warn{ fill:var(--alert); font-weight:500; }
-  @media (prefers-reduced-motion: reduce){ .ring, .sweep{ animation:none; } }
+  .hero{padding:72px 0 56px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:26px}.hero{padding:44px 0}}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:22px 0 6px}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;font-size:.88rem;color:var(--mut)}
+  .badge{border:1px solid var(--line);padding:6px 11px;border-radius:999px;background:var(--card)}
+  .note{font-size:.85rem;color:var(--mut)}
 
-  /* DIFFERENTIATOR */
-  .diff{ padding:64px 0; text-align:center; }
-  .diff h2{ font-size:2.1rem; max-width:20ch; margin:0 auto 16px; }
-  .diff p{ color:var(--muted); max-width:56ch; margin:0 auto; font-size:1.05rem; }
+  /* ── radar (SVG animado) ───────────────────────────────── */
+  .radar-wrap{display:flex;justify-content:center}
+  svg.radar{width:100%;max-width:440px;height:auto}
+  .ring{fill:none;stroke:var(--signal);stroke-width:1.5;stroke-dasharray:4 6;opacity:.35;
+    transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring2{animation-delay:.6s}
+  .ring3{animation-delay:1.2s}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.045);opacity:.6}}
+  .sweep{transform-box:fill-box;transform-origin:center;animation:spin 7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .node-link{stroke:var(--border);stroke-width:1.5;stroke-dasharray:3 4}
+  .node-dot{fill:var(--surface);stroke:var(--signal);stroke-width:2.5}
+  .node-dot.warn{stroke:var(--alert)}
+  .node-label{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+  .node-label.warn{fill:var(--alert);font-weight:500}
+  @media (prefers-reduced-motion: reduce){.ring,.sweep{animation:none}}
 
-  /* FEATURES */
-  .features{ padding:24px 0 68px; }
-  .grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; }
-  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:26px; }
-  .card .tag{ font-family:'IBM Plex Mono'; font-size:0.72rem; color:var(--signal-dark); margin-bottom:10px; display:block; }
-  .card h3{ font-size:1.12rem; margin-bottom:8px; }
-  .card p{ color:var(--muted); font-size:0.95rem; }
+  /* ── tarjetas y rejillas ───────────────────────────────── */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:26px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+  .card p{margin:0;color:var(--mut);font-size:.95rem}
 
-  /* TRIAL BAND */
-  .trial{ background:var(--ink); color:#fff; border-radius:20px; padding:44px 40px; display:flex; align-items:center; justify-content:space-between; gap:30px; flex-wrap:wrap; margin-bottom:70px; }
-  .trial h2{ font-size:1.6rem; margin-bottom:8px; }
-  .trial p{ color:#B7C2D4; max-width:50ch; }
-  .trial .btn-primary{ background:var(--signal); }
-  .trial .btn-primary:hover{ background:var(--signal-dark); }
+  .steps{margin-top:24px;display:grid;gap:14px}
+  .step{display:flex;gap:16px;align-items:flex-start}
+  .step b{flex:0 0 34px;height:34px;border-radius:50%;background:var(--bg2);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:.95rem}
 
-  footer{ border-top:1px solid var(--border); padding:32px 0 40px; }
-  .foot-row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
-  .langs{ color:var(--muted); font-size:0.85rem; font-family:'IBM Plex Mono'; }
-  .foot-links{ display:flex; gap:18px; }
-  .foot-links a{ color:var(--muted); text-decoration:none; font-size:0.9rem; }
-  .foot-links a:hover{ color:var(--ink); }
+  .shots{display:grid;gap:26px;margin-top:26px}
+  figure{margin:0}
+  figure img{width:100%;border-radius:var(--r);border:1px solid var(--line);display:block}
+  figcaption{color:var(--mut);font-size:.92rem;margin-top:9px}
 
-  @media (max-width: 780px){
-    .hero{ grid-template-columns:1fr; padding-top:32px; }
-    .hero h1{ font-size:2.1rem; }
-    .grid{ grid-template-columns:1fr 1fr; }
-    .trial{ flex-direction:column; align-items:flex-start; }
-  }
-  @media (max-width: 520px){
-    .grid{ grid-template-columns:1fr; }
-    .nav-links a:not(.btn){ display:none; }
-  }
+  .honest{background:linear-gradient(180deg,#101c30,#0e1728);border:1px solid var(--line);
+    border-radius:var(--r);padding:22px}
+  .honest b{color:var(--ok)}
+
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:600}
+  details p{margin:10px 0 0;color:var(--mut);font-size:.95rem}
+
+  .final{text-align:center}
+  footer{padding:34px 0;color:var(--mut);font-size:.88rem}
+  footer a{color:var(--mut);text-decoration:underline}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <nav>
-    <a class="brand" href="#top"><span class="dot"></span>WiFi Monitor</a>
-    <div class="nav-links">
-      <a href="#features">Funciones</a>
-      <a class="btn btn-primary btn-sm" href="https://apps.microsoft.com/store/detail/9P51J5MN0DGM" target="_blank" rel="noopener">Descargar</a>
-    </div>
-  </nav>
+<header>
+  <div class="wrap">
+    <div class="brand"><img src="assets/icono.png" alt="WiFi Monitor"> WiFi Monitor</div>
+    <a class="btn sm" href="https://apps.microsoft.com/detail/9p51j5mn0dgm" rel="noopener">Descargar en Microsoft Store</a>
+  </div>
+</header>
 
-  <section class="hero" id="top">
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">● Monitoreo en tiempo real</span>
+      <span class="eyebrow">Monitoreo en tiempo real</span>
       <h1>Mira exactamente quién está usando tu WiFi.</h1>
-      <p class="lead">WiFi Monitor detecta cada dispositivo conectado a tu red, mide tu velocidad real y te avisa si aparece un equipo que no reconoces. Una app que se usa, no solo se mira.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="https://apps.microsoft.com/store/detail/9P51J5MN0DGM" target="_blank" rel="noopener">Descargar en Microsoft Store</a>
-        <a class="btn btn-ghost" href="#features">Ver todas las funciones</a>
+      <p class="lead mut">WiFi Monitor detecta cada dispositivo conectado a tu red, reconoce el fabricante de cada uno, mide tu velocidad real y te avisa si aparece un equipo que no reconoces. Desde tu PC con Windows, sin entrar a configurar el módem. Una app que se usa, no solo se mira.</p>
+      <div class="cta">
+        <a class="btn" href="https://apps.microsoft.com/detail/9p51j5mn0dgm" rel="noopener">Probar gratis 7 días</a>
+        <a class="btn ghost" href="#como-se-ve">Ver cómo se ve</a>
+      </div>
+      <div class="badges">
+        <span class="badge">Windows 10 y 11</span>
+        <span class="badge">7 días con todo activo</span>
+        <span class="badge">6 idiomas</span>
       </div>
     </div>
-
     <div class="radar-wrap">
       <svg class="radar" viewBox="0 0 480 480" role="img" aria-label="Diagrama de un router transmitiendo señal a varios dispositivos conectados, con uno marcado como desconocido">
         <circle class="ring" cx="240" cy="240" r="60"/>
         <circle class="ring ring2" cx="240" cy="240" r="110"/>
         <circle class="ring ring3" cx="240" cy="240" r="160"/>
-
         <g class="sweep">
           <defs>
             <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
@@ -163,14 +159,12 @@
           <line x1="240" y1="240" x2="240" y2="80" stroke="url(#beam)" stroke-width="3"/>
         </g>
 
-        <!-- enlaces a dispositivos -->
         <line class="node-link" x1="240" y1="240" x2="89" y2="185"/>
         <line class="node-link" x1="240" y1="240" x2="212" y2="82"/>
         <line class="node-link" x1="240" y1="240" x2="363" y2="137"/>
         <line class="node-link" x1="240" y1="240" x2="390" y2="295"/>
         <line class="node-link" x1="240" y1="240" x2="268" y2="398"/>
 
-        <!-- router central -->
         <rect x="212" y="222" width="56" height="36" rx="8" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
         <circle cx="224" cy="240" r="2.5" fill="var(--signal)"/>
         <circle cx="240" cy="240" r="2.5" fill="var(--signal)"/>
@@ -178,7 +172,6 @@
         <line x1="222" y1="222" x2="210" y2="200" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
         <line x1="258" y1="222" x2="270" y2="200" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
 
-        <!-- dispositivos -->
         <circle class="node-dot" cx="89" cy="185" r="7"/>
         <text class="node-label" x="60" y="205">laptop · -38dBm</text>
 
@@ -195,71 +188,111 @@
         <text class="node-label" x="240" y="418">impresora · -60dBm</text>
       </svg>
     </div>
-  </section>
-</div>
-
-<section class="diff">
-  <div class="wrap">
-    <h2>No solo mira tu red. La controla.</h2>
-    <p>La mayoría de los monitores de red te muestran una lista de datos y ya. WiFi Monitor está pensado para que interactúes: corras un test de velocidad cuando quieras, revises el historial de tráfico, y actúes apenas algo no cuadra — no que te quedes viendo números pasar.</p>
   </div>
 </section>
 
-<div class="wrap">
-  <section class="features" id="features">
+<section id="funciones">
+  <div class="wrap">
+    <h2>No solo te da una lista. Te dice cuál es cuál.</h2>
+    <p class="lead mut">En la mayoría de los módems la lista de dispositivos se ve así: <code>android-a8f2c91</code>, <code>unknown-device</code>, <code>DESKTOP-4KP91</code>. Nombres que no sirven para decidir nada. Aquí cada aparato sale con su fabricante, su consumo y su historial — y si compartes la clave del wifi con el primo, el inquilino o el vecino, eso es exactamente lo que necesitas saber.</p>
     <div class="grid">
-      <div class="card">
-        <span class="tag">DISPOSITIVOS</span>
-        <h3>Cada equipo, identificado</h3>
-        <p>Detecta todo lo conectado a tu red y reconoce el fabricante de cada dispositivo, incluso el que no tiene nombre.</p>
-      </div>
-      <div class="card">
-        <span class="tag">VELOCIDAD</span>
-        <h3>Test de velocidad real</h3>
-        <p>Corre una medición de descarga y subida cuando lo necesites, sin salir de la app ni abrir el navegador.</p>
-      </div>
-      <div class="card">
-        <span class="tag">HISTORIAL</span>
-        <h3>7 días de tráfico</h3>
-        <p>Guarda el tráfico enviado y recibido de los últimos siete días para que notes patrones, no solo el momento actual.</p>
-      </div>
-      <div class="card">
-        <span class="tag">ALERTAS</span>
-        <h3>Avisos al instante</h3>
-        <p>Recibe una notificación de escritorio en el momento en que algo cambia en tu red.</p>
-      </div>
-      <div class="card">
-        <span class="tag">SEGURIDAD</span>
-        <h3>Detección de intrusos</h3>
-        <p>Define qué dispositivos son tuyos y WiFi Monitor marca cualquier MAC que no reconozca.</p>
-      </div>
-      <div class="card">
-        <span class="tag">IDIOMA</span>
-        <h3>Disponible en 6 idiomas</h3>
-        <p>Español, inglés, portugués, francés, alemán e italiano, sin configuración extra.</p>
-      </div>
+      <div class="card"><span class="tag">Dispositivos</span><h3>Cada equipo, identificado</h3><p>Detecta todo lo conectado a tu red y reconoce el fabricante de cada dispositivo, incluso el que no tiene nombre.</p></div>
+      <div class="card"><span class="tag">Velocidad</span><h3>Test de velocidad real</h3><p>Corre una medición de descarga, subida y latencia cuando lo necesites, sin salir de la app ni abrir el navegador.</p></div>
+      <div class="card"><span class="tag">Historial</span><h3>7 días de tráfico</h3><p>Guarda el tráfico enviado y recibido de los últimos siete días para que notes patrones, no solo el momento actual.</p></div>
+      <div class="card"><span class="tag">Alertas</span><h3>Avisos al instante</h3><p>Recibe una notificación de escritorio en el momento en que algo cambia en tu red.</p></div>
+      <div class="card"><span class="tag">Intrusos</span><h3>Lista blanca propia</h3><p>Define qué dispositivos son tuyos y la app marca cualquier equipo que aparezca fuera de esa lista.</p></div>
+      <div class="card"><span class="tag">Idioma</span><h3>Disponible en 6 idiomas</h3><p>Español, inglés, portugués, francés, alemán e italiano, sin configuración extra.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="trial">
-    <div>
-      <h2>Prueba los 7 días completos, gratis.</h2>
-      <p>Sin registros ni tarjeta para empezar. Instala desde la Microsoft Store y usa todas las funciones desde el primer minuto.</p>
+<section id="como-se-ve">
+  <div class="wrap">
+    <h2>Cómo se ve</h2>
+    <p class="lead mut">Cuatro pantallas reales de la app. Nada de maquetas.</p>
+    <div class="shots">
+      <figure>
+        <img src="assets/captura-resumen.jpg" alt="Resumen de red: red conectada, banda, IP y test de latencia" loading="lazy">
+        <figcaption><b>Resumen de red.</b> Qué red tienes, en qué banda, tu IP, y un test de latencia rápida.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/captura-dispositivos.jpg" alt="Dispositivos conectados con fabricante, IP y MAC" loading="lazy">
+        <figcaption><b>Dispositivos conectados.</b> Cada aparato con fabricante, IP y MAC, más un resumen por tipo de dispositivo.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/captura-analisis.jpg" alt="Diagnóstico de video y referencia para streaming" loading="lazy">
+        <figcaption><b>¿Por qué va lento mi video?</b> Compara tu conexión con lo que de verdad necesita cada calidad de video.</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/captura-velocidad.jpg" alt="Test de velocidad real: descarga, subida y ping" loading="lazy">
+        <figcaption><b>Test de velocidad real.</b> Descarga, subida y latencia, con el detalle de para qué alcanza cada número.</figcaption>
+      </figure>
     </div>
-    <a class="btn btn-primary" href="https://apps.microsoft.com/store/detail/9P51J5MN0DGM" target="_blank" rel="noopener">Descargar en Microsoft Store</a>
-  </section>
+  </div>
+</section>
 
-</div>
+<section>
+  <div class="wrap">
+    <h2>Se usa en tres pasos</h2>
+    <div class="steps">
+      <div class="step"><b>1</b><div><h3>Abres la app</h3><p class="mut">Escanea tu red y te muestra todo lo que está conectado en ese momento.</p></div></div>
+      <div class="step"><b>2</b><div><h3>Marcas los tuyos</h3><p class="mut">Te toma un minuto, una sola vez. A los que no reconozcas los ubicas en la casa por el fabricante.</p></div></div>
+      <div class="step"><b>3</b><div><h3>Te despreocupas</h3><p class="mut">Si algo entra fuera de tu lista, te avisa. Y si decides cerrar la red, el orden correcto es cambiar la clave del wifi en el módem y avisar a quien le hayas dado acceso.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Lo que esta app no hace (para que no te lleves sorpresas)</h2>
+    <div class="honest">
+      <p><b>No bloquea dispositivos por ti.</b> Identifica exactamente cuál es cada aparato —fabricante, IP y MAC— para que tú lo bloquees en las opciones de tu módem, que es donde se puede hacer. Tampoco entra ni cambia nada de tu router: solo lee lo que necesita para mostrarte la red.</p>
+      <p class="mut" style="margin:0">Es una app de <b>PC con Windows</b> (no de celular), y tu PC tiene que estar encendido y conectado a la red para poder monitorearla.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Preguntas que siempre salen</h2>
+    <details><summary>¿Tengo que configurar algo en el módem?</summary><p>No. Se instala como cualquier app de la Microsoft Store y funciona con el wifi al que ya estás conectado.</p></details>
+    <details><summary>¿Sirve para el celular?</summary><p>No. Es una aplicación de escritorio para Windows 10 y 11. Existen apps de celular para lo mismo, pero esta se pensó para la PC: es donde ves la lista completa y donde puedes comparar con la página del módem.</p></details>
+    <details><summary>¿Puede saber quién es la persona, no solo el aparato?</summary><p>No, y desconfía de la app que te lo prometa. Los aparatos se identifican por su fabricante y su dirección de red, no por el nombre de su dueño. Lo que sí funciona: apaga aparatos uno por uno hasta que el desconocido desaparezca de la lista, y así confirmas cuál es.</p></details>
+    <details><summary>¿Cuánto cuesta?</summary><p>Prueba gratis de 7 días con todas las funciones activas. Después, USD 2,99 desde la Microsoft Store.</p></details>
+    <details><summary>¿Consume muchos recursos?</summary><p>No. Corre en segundo plano y el escaneo de dispositivos es liviano. Las notificaciones de escritorio se pueden desactivar.</p></details>
+  </div>
+</section>
+
+<section class="final" style="border-bottom:none">
+  <div class="wrap">
+    <h2>Prueba los 7 días completos, gratis.</h2>
+    <p class="lead mut" style="margin:0 auto 22px">Sin registros ni tarjeta para empezar. Instala desde la Microsoft Store y usa todas las funciones desde el primer minuto.</p>
+    <a class="btn" href="https://apps.microsoft.com/detail/9p51j5mn0dgm" rel="noopener">Abrir en Microsoft Store</a>
+    <p class="note" style="margin-top:14px">Windows 10 (1809 o superior) y Windows 11 · Pago a través de Microsoft</p>
+  </div>
+</section>
 
 <footer>
-  <div class="wrap foot-row">
-    <span class="langs">ES · EN · PT · FR · DE · IT</span>
-    <div class="foot-links">
-      <a href="https://apps.microsoft.com/store/detail/9P51J5MN0DGM" target="_blank" rel="noopener">Microsoft Store</a>
-    </div>
-    <span class="langs">© 2026 WiFi Monitor</span>
+  <div class="wrap">
+    <p>WiFi Monitor es un producto independiente. Microsoft, Windows y Microsoft Store son marcas registradas de Microsoft Corporation.</p>
+    <p>© 2026 WiFi Monitor · <a href="mailto:hola@wifimonitor.app">Contacto</a></p>
   </div>
 </footer>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"SoftwareApplication",
+  "name":"WiFi Monitor",
+  "applicationCategory":"UtilitiesApplication",
+  "operatingSystem":"Windows 10, Windows 11",
+  "inLanguage":["es","en","pt","fr","de","it"],
+  "description":"Muestra qué dispositivos están conectados a tu red wifi con identificación del fabricante, guarda 7 días de historial de tráfico, avisa de dispositivos desconocidos y mide la velocidad. Para Windows.",
+  "url":"https://omarlopezg2-afk.github.io/Wifi_Monitor/",
+  "installUrl":"https://apps.microsoft.com/detail/9p51j5mn0dgm",
+  "offers":{"@type":"Offer","price":"2.99","priceCurrency":"USD","url":"https://apps.microsoft.com/detail/9p51j5mn0dgm"}
+}
+</script>
 
 </body>
 </html>
