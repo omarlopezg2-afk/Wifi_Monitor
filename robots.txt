@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://omarlopezg2-afk.github.io/Wifi_Monitor/sitemap.xml

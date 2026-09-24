@@ -72,6 +72,9 @@
   .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:22px 0 6px}
   .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;font-size:.88rem;color:var(--mut)}
   .badge{border:1px solid var(--line);padding:6px 11px;border-radius:999px;background:var(--card)}
+  /* insignia dentro de una tarjeta: más pequeña y alineada con la etiqueta de arriba */
+  .card .badge{display:inline-block;font-size:.74rem;letter-spacing:.02em;color:var(--acc);
+    padding:4px 9px;margin:0 0 8px 8px;background:rgba(56,166,240,.08);border-color:rgba(56,166,240,.35)}
   .note{font-size:.85rem;color:var(--mut)}
 
   /* ── radar (SVG animado) ───────────────────────────────── */
@@ -93,6 +96,8 @@
 
   /* ── tarjetas y rejillas ───────────────────────────────── */
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:26px}
+  /* En escritorio, 4 columnas: las gratis quedan juntas y las de pago, juntas. */
+  @media(min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
   .card p{margin:0;color:var(--mut);font-size:.95rem}
 
@@ -198,11 +203,13 @@
     <div class="grid">
       <div class="card"><span class="tag">Dispositivos</span><h3>Cada equipo, identificado</h3><p>Detecta todo lo conectado a tu red y reconoce el fabricante de cada dispositivo, incluso el que no tiene nombre.</p></div>
       <div class="card"><span class="tag">Velocidad</span><h3>Test de velocidad real</h3><p>Corre una medición de descarga, subida y latencia cuando lo necesites, sin salir de la app ni abrir el navegador.</p></div>
-      <div class="card"><span class="tag">Historial</span><h3>7 días de tráfico</h3><p>Guarda el tráfico enviado y recibido de los últimos siete días para que notes patrones, no solo el momento actual.</p></div>
-      <div class="card"><span class="tag">Alertas</span><h3>Avisos al instante</h3><p>Recibe una notificación de escritorio en el momento en que algo cambia en tu red.</p></div>
-      <div class="card"><span class="tag">Intrusos</span><h3>Lista blanca propia</h3><p>Define qué dispositivos son tuyos y la app marca cualquier equipo que aparezca fuera de esa lista.</p></div>
+      <div class="card"><span class="tag">Diagnóstico de vídeo</span><h3>¿Por qué va lento mi video?</h3><p>Compara tu conexión con lo que de verdad necesita cada calidad de video y te dice si el problema está en tu red o en el servicio.</p></div>
       <div class="card"><span class="tag">Idioma</span><h3>Disponible en 6 idiomas</h3><p>Español, inglés, portugués, francés, alemán e italiano, sin configuración extra.</p></div>
+      <div class="card"><span class="tag">Historial</span><span class="badge">Versión completa</span><h3>7 días de tráfico</h3><p>Guarda el tráfico enviado y recibido de los últimos siete días para que notes patrones, no solo el momento actual.</p></div>
+      <div class="card"><span class="tag">Alertas</span><span class="badge">Versión completa</span><h3>Avisos al instante</h3><p>Recibe una notificación de escritorio en el momento en que algo cambia en tu red.</p></div>
+      <div class="card"><span class="tag">Intrusos</span><span class="badge">Versión completa</span><h3>Lista blanca propia</h3><p>Define qué dispositivos son tuyos y la app marca cualquier equipo que aparezca fuera de esa lista.</p></div>
     </div>
+    <p class="note" style="margin-top:18px">Los tres últimos —Intrusos, Historial y Alertas— se desbloquean una sola vez por USD 1,99 desde la propia app. Todo lo demás es gratis y sin límite de tiempo.</p>
   </div>
 </section>
 
