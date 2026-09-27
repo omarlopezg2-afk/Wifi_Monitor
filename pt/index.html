@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WiFi Monitor — Veja exatamente quem está usando seu Wi-Fi (Windows)</title>
+<meta name="description" content="O WiFi Monitor detecta cada dispositivo conectado à sua rede e identifica o fabricante, guarda 7 dias de tráfego, mede sua velocidade real e avisa quando aparece um aparelho que você não reconhece. App para Windows, sem configurar o roteador.">
+<link rel="canonical" href="https://wifimonitor.app/pt/">
+<link rel="alternate" hreflang="es" href="https://wifimonitor.app/">
+<link rel="alternate" hreflang="en" href="https://wifimonitor.app/en/">
+<link rel="alternate" hreflang="pt" href="https://wifimonitor.app/pt/">
+<link rel="alternate" hreflang="fr" href="https://wifimonitor.app/fr/">
+<link rel="alternate" hreflang="de" href="https://wifimonitor.app/de/">
+<link rel="alternate" hreflang="it" href="https://wifimonitor.app/it/">
+<link rel="alternate" hreflang="x-default" href="https://wifimonitor.app/">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="icon" href="/assets/icono.png" type="image/png">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Veja exatamente quem está usando seu Wi-Fi">
+<meta property="og:description" content="Dispositivos conectados com fabricante, 7 dias de tráfego, alertas e teste de velocidade. Para Windows.">
+<meta property="og:image" content="https://wifimonitor.app/assets/captura-dispositivos.jpg">
+<meta property="og:url" content="https://wifimonitor.app/pt/">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+  :root{
+    --bg:#0a0f1a; --bg2:#0f172a; --card:#131c2e; --line:#22304a;
+    --fg:#e8eefb; --mut:#93a3bd; --acc:#38a6f0; --acc2:#1e6fd9; --ok:#34d399;
+
+    /* alias que usa el SVG del radar (se conservan los nombres originales) */
+    --signal:var(--acc); --surface:var(--card); --ink:var(--fg);
+    --muted:var(--mut); --border:var(--line); --alert:#f8705f;
+
+    --r:14px; --maxw:1080px;
+    --mono:ui-monospace,"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:radial-gradient(1200px 600px at 50% -10%,#12233d 0%,transparent 60%),var(--bg);
+    color:var(--fg);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--acc);text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  header{padding:18px 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(10,15,26,.86);backdrop-filter:blur(8px);z-index:10}
+  header .wrap{display:flex;align-items:center;gap:12px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:650}
+  .brand img{width:28px;height:28px;border-radius:8px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,var(--acc),var(--acc2));
+    color:#fff;font-weight:650;padding:11px 18px;border-radius:10px;border:1px solid #2b7fd4;
+    box-shadow:0 6px 20px rgba(56,166,240,.22)
+  }
+  .btn:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--fg);box-shadow:none}
+  .sm{padding:8px 13px;font-size:.92rem}
+
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  h1{font-size:clamp(1.8rem,4.6vw,3rem);line-height:1.14;margin:0 0 14px;letter-spacing:-.6px}
+  h2{font-size:clamp(1.25rem,2.6vw,1.85rem);margin:0 0 12px;letter-spacing:-.3px}
+  h3{font-size:1.05rem;margin:0 0 6px}
+  p{margin:0 0 14px}
+  .mut{color:var(--mut)}
+  .lead{font-size:1.1rem;max-width:56ch}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+  .eyebrow::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);
+    box-shadow:0 0 0 4px rgba(56,166,240,.16)}
+  .tag{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--acc);margin-bottom:8px}
+
+  .hero{padding:72px 0 56px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  @media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:26px}.hero{padding:44px 0}}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:22px 0 6px}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;font-size:.88rem;color:var(--mut)}
+  .badge{border:1px solid var(--line);padding:6px 11px;border-radius:999px;background:var(--card)}
+  /* insignia dentro de una tarjeta: más pequeña y alineada con la etiqueta de arriba */
+  .card .badge{display:inline-block;font-size:.74rem;letter-spacing:.02em;color:var(--acc);
+    padding:4px 9px;margin:0 0 8px 8px;background:rgba(56,166,240,.08);border-color:rgba(56,166,240,.35)}
+  .note{font-size:.85rem;color:var(--mut)}
+
+  /* ── radar (SVG animado) ───────────────────────────────── */
+  .radar-wrap{display:flex;justify-content:center}
+  svg.radar{width:100%;max-width:440px;height:auto}
+  .ring{fill:none;stroke:var(--signal);stroke-width:1.5;stroke-dasharray:4 6;opacity:.35;
+    transform-box:fill-box;transform-origin:center;animation:pulse 4s ease-in-out infinite}
+  .ring2{animation-delay:.6s}
+  .ring3{animation-delay:1.2s}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.045);opacity:.6}}
+  .sweep{transform-box:fill-box;transform-origin:center;animation:spin 7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .node-link{stroke:var(--border);stroke-width:1.5;stroke-dasharray:3 4}
+  .node-dot{fill:var(--surface);stroke:var(--signal);stroke-width:2.5}
+  .node-dot.warn{stroke:var(--alert)}
+  .node-label{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+  .node-label.warn{fill:var(--alert);font-weight:500}
+  @media (prefers-reduced-motion: reduce){.ring,.sweep{animation:none}}
+
+  /* ── tarjetas y rejillas ───────────────────────────────── */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:26px}
+  /* En escritorio, 4 columnas: las gratis quedan juntas y las de pago, juntas. */
+  @media(min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+  .card p{margin:0;color:var(--mut);font-size:.95rem}
+
+  .steps{margin-top:24px;display:grid;gap:14px}
+  .step{display:flex;gap:16px;align-items:flex-start}
+  .step b{flex:0 0 34px;height:34px;border-radius:50%;background:var(--bg2);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:.95rem}
+
+  .shots{display:grid;gap:26px;margin-top:26px}
+  figure{margin:0}
+  figure img{width:100%;border-radius:var(--r);border:1px solid var(--line);display:block}
+  figcaption{color:var(--mut);font-size:.92rem;margin-top:9px}
+
+  .honest{background:linear-gradient(180deg,#101c30,#0e1728);border:1px solid var(--line);
+    border-radius:var(--r);padding:22px}
+  .honest b{color:var(--ok)}
+
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:600}
+  details p{margin:10px 0 0;color:var(--mut);font-size:.95rem}
+
+  .final{text-align:center}
+  footer{padding:34px 0;color:var(--mut);font-size:.88rem}
+  footer a{color:var(--mut);text-decoration:underline}
+  /* ── selector de idioma ────────────────────────────────── */
+  .hdr-r{display:flex;align-items:center;gap:10px}
+  details.lang{position:relative;background:none;border:0;padding:0;margin:0}
+  details.lang summary{list-style:none;display:flex;align-items:center;gap:6px;font-size:.88rem;font-weight:600;
+    color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:7px 11px;user-select:none}
+  details.lang summary::-webkit-details-marker{display:none}
+  details.lang summary:hover{border-color:#34476a}
+  details.lang summary svg{width:16px;height:16px;flex:none}
+  details.lang ul{position:absolute;right:0;top:calc(100% + 6px);list-style:none;margin:0;padding:6px;min-width:160px;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.4);z-index:20}
+  details.lang li a{display:block;padding:8px 11px;border-radius:8px;color:var(--fg);font-size:.93rem}
+  details.lang li a:hover{background:var(--bg2)}
+  details.lang li a[aria-current="page"]{color:var(--acc);font-weight:650}
+  .btn .short{display:none}
+  .brand{white-space:nowrap}
+  @media(max-width:560px){.btn .long{display:none}.btn .short{display:inline}}
+  @media(max-width:400px){header .wrap{gap:8px}.hdr-r{gap:6px}.brand{gap:8px;font-size:.95rem}
+    details.lang summary{padding:7px 8px}header .btn.sm{padding:8px 10px;font-size:.86rem}}
+  @media(max-width:350px){.brand-name{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><img src="/assets/icono.png" alt="WiFi Monitor"> <span class="brand-name">WiFi Monitor</span></div>
+    <div class="hdr-r">
+      <details class="lang">
+        <summary aria-label="Idioma"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>PT</summary>
+        <ul>
+          <li><a href="/" hreflang="es" lang="es">Español</a></li>
+          <li><a href="/en/" hreflang="en" lang="en">English</a></li>
+          <li><a href="/pt/" hreflang="pt" lang="pt" aria-current="page">Português</a></li>
+          <li><a href="/fr/" hreflang="fr" lang="fr">Français</a></li>
+          <li><a href="/de/" hreflang="de" lang="de">Deutsch</a></li>
+          <li><a href="/it/" hreflang="it" lang="it">Italiano</a></li>
+        </ul>
+      </details>
+      <a class="btn sm" href="https://apps.microsoft.com/detail/9p51j5mn0dgm" rel="noopener"><span class="long">Baixar na Microsoft Store</span><span class="short">Baixar</span></a>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Monitoramento em tempo real</span>
+      <h1>Veja exatamente quem está usando seu Wi-Fi.</h1>
+      <p class="lead mut">O WiFi Monitor detecta cada dispositivo conectado à sua rede, reconhece o fabricante de cada um, mede sua velocidade real e avisa se aparecer um aparelho que você não reconhece. Direto do seu PC com Windows, sem mexer nas configurações do roteador. Um app para usar, não só para olhar.</p>
+      <div class="cta">
+        <a class="btn" href="https://apps.microsoft.com/detail/9p51j5mn0dgm" rel="noopener">Instalar grátis pela Store</a>
+        <a class="btn ghost" href="#como-se-ve">Ver como fica</a>
+      </div>
+      <div class="badges">
+        <span class="badge">Windows 10 e 11</span>
+        <span class="badge">Grátis, sem cadastro</span>
+        <span class="badge">6 idiomas</span>
+      </div>
+    </div>
+    <div class="radar-wrap">
+      <svg class="radar" viewBox="0 0 480 480" role="img" aria-label="Diagrama de um roteador transmitindo sinal para vários dispositivos conectados, com um marcado como desconhecido">
+        <circle class="ring" cx="240" cy="240" r="60"/>
+        <circle class="ring ring2" cx="240" cy="240" r="110"/>
+        <circle class="ring ring3" cx="240" cy="240" r="160"/>
+        <g class="sweep">
+          <defs>
+            <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="var(--signal)" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="var(--signal)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="240" y1="240" x2="240" y2="80" stroke="url(#beam)" stroke-width="3"/>
+        </g>
+
+        <line class="node-link" x1="240" y1="240" x2="89" y2="185"/>
+        <line class="node-link" x1="240" y1="240" x2="212" y2="82"/>
+        <line class="node-link" x1="240" y1="240" x2="363" y2="137"/>
+        <line class="node-link" x1="240" y1="240" x2="390" y2="295"/>
+        <line class="node-link" x1="240" y1="240" x2="268" y2="398"/>
+
+        <rect x="212" y="222" width="56" height="36" rx="8" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+        <circle cx="224" cy="240" r="2.5" fill="var(--signal)"/>
+        <circle cx="240" cy="240" r="2.5" fill="var(--signal)"/>
+        <circle cx="256" cy="240" r="2.5" fill="var(--ink)"/>
+        <line x1="222" y1="222" x2="210" y2="200" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="258" y1="222" x2="270" y2="200" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+
+        <circle class="node-dot" cx="89" cy="185" r="7"/>
+        <text class="node-label" x="60" y="205">notebook · -38dBm</text>
+
+        <circle class="node-dot" cx="212" cy="82" r="7"/>
+        <text class="node-label" x="184" y="68">tv · -52dBm</text>
+
+        <circle class="node-dot" cx="363" cy="137" r="7"/>
+        <text class="node-label" x="352" y="122">celular · -45dBm</text>
+
+        <circle class="node-dot warn" cx="390" cy="295" r="7"/>
+        <text class="node-label warn" x="352" y="316">? · mac desconhecido</text>
+
+        <circle class="node-dot" cx="268" cy="398" r="7"/>
+        <text class="node-label" x="240" y="418">impressora · -60dBm</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="funciones">
+  <div class="wrap">
+    <h2>Não é só uma lista. Ele diz qual é qual.</h2>
+    <p class="lead mut">Na maioria dos roteadores, a lista de dispositivos aparece assim: <code>android-a8f2c91</code>, <code>unknown-device</code>, <code>DESKTOP-4KP91</code>. Nomes que não ajudam a decidir nada. Aqui cada aparelho aparece com o fabricante, o consumo e o histórico — e se você compartilha a senha do Wi-Fi com o primo, o inquilino ou o vizinho, é exatamente isso que você precisa saber.</p>
+    <div class="grid">
+      <div class="card"><span class="tag">Dispositivos</span><h3>Cada aparelho, identificado</h3><p>Detecta tudo o que está conectado à sua rede e reconhece o fabricante de cada dispositivo, até daquele que não tem nome.</p></div>
+      <div class="card"><span class="tag">Velocidade</span><h3>Teste de velocidade real</h3><p>Faça uma medição de download, upload e latência quando precisar, sem sair do app nem abrir o navegador.</p></div>
+      <div class="card"><span class="tag">Diagnóstico de vídeo</span><h3>Por que meu vídeo está travando?</h3><p>Compara sua conexão com o que cada qualidade de vídeo realmente precisa e diz se o problema está na sua rede ou no serviço.</p></div>
+      <div class="card"><span class="tag">Idioma</span><h3>Disponível em 6 idiomas</h3><p>Espanhol, inglês, português, francês, alemão e italiano, sem configuração extra.</p></div>
+      <div class="card"><span class="tag">Histórico</span><span class="badge">Versão completa</span><h3>7 dias de tráfego</h3><p>Guarda o tráfego enviado e recebido dos últimos sete dias para você perceber padrões, não só o momento atual.</p></div>
+      <div class="card"><span class="tag">Alertas</span><span class="badge">Versão completa</span><h3>Avisos na hora</h3><p>Receba uma notificação na área de trabalho assim que algo mudar na sua rede.</p></div>
+      <div class="card"><span class="tag">Intrusos</span><span class="badge">Versão completa</span><h3>Sua própria lista de confiança</h3><p>Defina quais dispositivos são seus e o app marca qualquer aparelho que aparecer fora dessa lista.</p></div>
+    </div>
+    <p class="note" style="margin-top:18px">Os três últimos —Intrusos, Histórico e Alertas— são desbloqueados uma única vez por US$ 1,99 dentro do próprio app. Todo o resto é grátis e sem limite de tempo.</p>
+  </div>
+</section>
+
+<section id="como-se-ve">
+  <div class="wrap">
+    <h2>Como fica</h2>
+    <p class="lead mut">Quatro telas reais do app. Nada de montagens.</p>
+    <div class="shots">
+      <figure>
+        <img src="/assets/captura-resumen.jpg" alt="Resumo da rede: rede conectada, banda, IP e teste de latência" loading="lazy">
+        <figcaption><b>Resumo da rede.</b> Qual rede você tem, em que banda, seu IP e um teste rápido de latência.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/captura-dispositivos.jpg" alt="Dispositivos conectados com fabricante, IP e MAC" loading="lazy">
+        <figcaption><b>Dispositivos conectados.</b> Cada aparelho com fabricante, IP e MAC, mais um resumo por tipo de dispositivo.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/captura-analisis.jpg" alt="Diagnóstico de vídeo e referência para streaming" loading="lazy">
+        <figcaption><b>Por que meu vídeo está travando?</b> Compara sua conexão com o que cada qualidade de vídeo realmente precisa.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/captura-velocidad.jpg" alt="Teste de velocidade real: download, upload e ping" loading="lazy">
+        <figcaption><b>Teste de velocidade real.</b> Download, upload e latência, com o detalhe do que cada número permite fazer.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Funciona em três passos</h2>
+    <div class="steps">
+      <div class="step"><b>1</b><div><h3>Você abre o app</h3><p class="mut">Ele escaneia sua rede e mostra tudo o que está conectado naquele momento.</p></div></div>
+      <div class="step"><b>2</b><div><h3>Você marca os seus</h3><p class="mut">Leva um minuto, uma única vez. Os que você não reconhecer, dá para localizar na casa pelo fabricante.</p></div></div>
+      <div class="step"><b>3</b><div><h3>Você fica tranquilo</h3><p class="mut">Se algo entrar fora da sua lista, ele avisa. E se decidir fechar a rede, o certo é trocar a senha do Wi-Fi no roteador e avisar quem tinha acesso.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>O que este app não faz (para você não ter surpresas)</h2>
+    <div class="honest">
+      <p><b>Ele não bloqueia dispositivos por você.</b> Identifica exatamente qual é cada aparelho —fabricante, IP e MAC— para que você o bloqueie nas configurações do seu roteador, que é onde isso pode ser feito. Também não entra nem altera nada no seu roteador: só lê o que precisa para mostrar a rede.</p>
+      <p class="mut" style="margin:0">É um app para <b>PC com Windows</b> (não para celular), e seu PC precisa estar ligado e conectado à rede para monitorá-la.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Perguntas que sempre aparecem</h2>
+    <details><summary>Preciso configurar algo no roteador?</summary><p>Não. Ele é instalado como qualquer app da Microsoft Store e funciona com o Wi-Fi ao qual você já está conectado.</p></details>
+    <details><summary>Funciona no celular?</summary><p>Não. É um aplicativo de desktop para Windows 10 e 11. Existem apps de celular para isso, mas este foi pensado para o PC: é onde você vê a lista completa e pode comparar com a página do roteador.</p></details>
+    <details><summary>Ele consegue saber quem é a pessoa, não só o aparelho?</summary><p>Não, e desconfie de qualquer app que prometa isso. Os aparelhos são identificados pelo fabricante e pelo endereço de rede, não pelo nome do dono. O que funciona: desligue os aparelhos um por um até o desconhecido sumir da lista, e assim você confirma qual é.</p></details>
+    <details><summary>Quanto custa?</summary><p>O app é grátis: sua rede completa, os dispositivos com o fabricante, o teste de velocidade e o diagnóstico de vídeo, sem limite de tempo. Se você também quiser os avisos que dizem quando algo muda —Intrusos, Histórico de 7 dias e Alertas—, eles são desbloqueados com um pagamento único de US$ 1,99 dentro do próprio app.</p></details>
+    <details><summary>Consome muitos recursos?</summary><p>Não. Ele roda em segundo plano e o escaneamento de dispositivos é leve. As notificações na área de trabalho podem ser desativadas.</p></details>
+  </div>
+</section>
+
+<section class="final" style="border-bottom:none">
+  <div class="wrap">
+    <h2>Veja sua rede grátis, em dois minutos.</h2>
+    <p class="lead mut" style="margin:0 auto 22px">Sem cadastro nem cartão. Instale pela Microsoft Store e comece a ver quem está usando seu Wi-Fi; se quiser os avisos, eles são desbloqueados uma única vez por US$ 1,99.</p>
+    <a class="btn" href="https://apps.microsoft.com/detail/9p51j5mn0dgm" rel="noopener">Abrir na Microsoft Store</a>
+    <p class="note" style="margin-top:14px">Windows 10 (1809 ou superior) e Windows 11 · Pagamento pela Microsoft</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>O WiFi Monitor é um produto independente. Microsoft, Windows e Microsoft Store são marcas registradas da Microsoft Corporation.</p>
+    <p>© 2026 WiFi Monitor · <a href="/privacidad/#en">Privacidade</a> · <a href="mailto:hola@wifimonitor.app">Contato</a></p>
+  </div>
+</footer>
+
+<script>
+  // Cierra el selector de idioma al hacer clic fuera de él
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('details.lang[open]').forEach(function (d) {
+      if (!d.contains(e.target)) d.removeAttribute('open');
+    });
+  });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"SoftwareApplication",
+  "name":"WiFi Monitor",
+  "applicationCategory":"UtilitiesApplication",
+  "operatingSystem":"Windows 10, Windows 11",
+  "inLanguage":["es","en","pt","fr","de","it"],
+  "description":"Mostra quais dispositivos estão conectados à sua rede Wi-Fi com identificação do fabricante, guarda 7 dias de histórico de tráfego, avisa sobre dispositivos desconhecidos e mede a velocidade. Para Windows.",
+  "url":"https://wifimonitor.app/pt/",
+  "installUrl":"https://apps.microsoft.com/detail/9p51j5mn0dgm",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD","url":"https://apps.microsoft.com/detail/9p51j5mn0dgm"}
+}
+</script>
+
+</body>
+</html>
