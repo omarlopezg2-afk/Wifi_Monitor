@@ -144,6 +144,11 @@
   details.lang li a[aria-current="page"]{color:var(--acc);font-weight:650}
   .btn .short{display:none}
   .brand{white-space:nowrap}
+  .langbar{display:none;background:#12233d;border-bottom:1px solid var(--line);font-size:.92rem}
+  .langbar.show{display:block}
+  .langbar .wrap{display:flex;align-items:center;justify-content:center;gap:14px;padding-top:9px;padding-bottom:9px;flex-wrap:wrap}
+  .langbar a.go{font-weight:650}
+  .langbar button{background:none;border:0;color:var(--mut);font-size:1.2rem;line-height:1;cursor:pointer;padding:2px 6px}
   @media(max-width:560px){.btn .long{display:none}.btn .short{display:inline}}
   @media(max-width:400px){header .wrap{gap:8px}.hdr-r{gap:6px}.brand{gap:8px;font-size:.95rem}
     details.lang summary{padding:7px 8px}header .btn.sm{padding:8px 10px;font-size:.86rem}}
@@ -151,7 +156,36 @@
 </style>
 </head>
 <body>
-
+<div class="langbar" id="langbar" role="region" aria-label="Language">
+  <div class="wrap"><span id="lb-msg"></span><a class="go" id="lb-go" href="/en/"></a><button type="button" id="lb-x" aria-label="Close">×</button></div>
+</div>
+<script>
+(function () {
+  // Sugiere la versión en el idioma del navegador. No redirige: solo muestra un aviso.
+  var M = {
+    en: ['This page is also available in English.', 'View in English →'],
+    pt: ['Esta página também está disponível em português.', 'Ver em português →'],
+    fr: ['Cette page est aussi disponible en français.', 'Voir en français →'],
+    de: ['Diese Seite gibt es auch auf Deutsch.', 'Auf Deutsch ansehen →'],
+    it: ['Questa pagina è disponibile anche in italiano.', 'Vedi in italiano →']
+  };
+  try {
+    if (/wifimonitor\.app/.test(document.referrer)) return;      // ya eligió idioma en el sitio
+    if (localStorage.getItem('wm-langbar') === 'off') return;     // lo cerró antes
+  } catch (e) {}
+  var langs = navigator.languages || [navigator.language || ''];
+  var code = String(langs[0] || '').slice(0, 2).toLowerCase();
+  if (!M[code]) return;                                           // español u otro idioma: nada
+  document.getElementById('lb-msg').textContent = M[code][0];
+  var go = document.getElementById('lb-go');
+  go.textContent = M[code][1]; go.href = '/' + code + '/'; go.lang = code;
+  var bar = document.getElementById('langbar'); bar.lang = code; bar.className += ' show';
+  document.getElementById('lb-x').onclick = function () {
+    bar.className = 'langbar';
+    try { localStorage.setItem('wm-langbar', 'off'); } catch (e) {}
+  };
+})();
+</script>
 <header>
   <div class="wrap">
     <div class="brand"><img src="/assets/icono.png" alt="WiFi Monitor"> <span class="brand-name">WiFi Monitor</span></div>
