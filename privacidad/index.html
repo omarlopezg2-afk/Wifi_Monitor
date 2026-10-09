@@ -49,7 +49,7 @@
   </div>
 
   <h1>Política de Privacidad</h1>
-  <p class="fecha">WiFi Monitor · Última actualización: 24 de septiembre de 2026</p>
+  <p class="fecha">WiFi Monitor · Última actualización: 9 de octubre de 2026</p>
 
   <div class="destaca">
     <p><strong>En una frase:</strong> WiFi Monitor mira tu red <em>desde tu propio equipo</em> y
@@ -76,7 +76,7 @@
   <h2>3. Dónde se quedan esos datos</h2>
   <p><strong>En tu equipo, y solo en tu equipo.</strong> Se guardan en una carpeta dentro de tu
   perfil de usuario, <code>.wifi_monitor</code>, junto a tu lista blanca de dispositivos y el
-  historial de tráfico.</p>
+  historial de tráfico (una muestra por minuto mientras la app está abierta).</p>
   <p>No se envían a ningún servidor nuestro, porque no tenemos servidores. El desarrollador
   no recibe esa información y no puede verla.</p>
   <p>Y son tuyos de verdad: si quieres borrarlos, cierras la app, borras esa carpeta y
@@ -112,10 +112,15 @@
   <p>Para saber cuál es <em>tu</em> dirección IP dentro de tu red, la app abre un socket local
   hacia una dirección pública. Es el truco estándar para que el sistema operativo elija la
   interfaz de red correcta, y <strong>no envía ningún dato</strong>: no se manda ni un paquete.</p>
+  <p>Ese socket se abre <strong>solo dentro de tu equipo</strong>. La ventana interna de la app
+  escucha en <code>127.0.0.1</code>, que no es accesible desde tu red ni desde internet: ninguna
+  otra máquina puede conectarse a ella. Por eso, desde la versión 6.31.5, Windows ya no te pide
+  permiso de firewall para la app.</p>
 
   <h2>7. Notificaciones</h2>
   <p>Las alertas de la versión completa son notificaciones de escritorio de Windows, generadas
-  en tu equipo. No pasan por ningún servicio externo.</p>
+  en tu equipo. No pasan por ningún servicio externo, y vienen <strong>apagadas</strong>: las
+  enciendes tú y eliges de qué quieres que te avise.</p>
 
   <h2>8. Menores</h2>
   <p>La app no está dirigida a menores de edad y no recoge datos de ningún usuario, sea quien sea.</p>
@@ -136,7 +141,7 @@
     </div>
 
     <h1>Privacy Policy</h1>
-    <p class="fecha">WiFi Monitor · Last updated: September 24, 2026</p>
+    <p class="fecha">WiFi Monitor · Last updated: October 9, 2026</p>
 
     <div class="destaca">
       <p><strong>In one sentence:</strong> WiFi Monitor looks at your network <em>from your own
@@ -165,7 +170,7 @@
     <h2>3. Where that data stays</h2>
     <p><strong>On your computer, and only on your computer.</strong> It is stored in a folder
     inside your user profile, <code>.wifi_monitor</code>, together with your device whitelist
-    and traffic history.</p>
+    and traffic history (one sample a minute while the app is open).</p>
     <p>Nothing is sent to any server of ours, because we do not have servers. The developer does
     not receive that information and cannot see it.</p>
     <p>And it is genuinely yours: if you want to delete it, close the app, delete that folder
@@ -201,10 +206,15 @@
     <p>To find out your own IP address on your network, the app opens a local socket towards a
     public address. This is the standard trick to make the operating system pick the right
     network interface, and it <strong>sends no data</strong>: not a single packet.</p>
+    <p>That socket is opened <strong>only inside your computer</strong>. The app's internal window
+    listens on <code>127.0.0.1</code>, which is not reachable from your network or from the
+    internet: no other machine can connect to it. That is why, as of version 6.31.5, Windows no
+    longer asks you for firewall permission for the app.</p>
 
     <h2>7. Notifications</h2>
     <p>The full version's alerts are Windows desktop notifications, generated on your computer.
-    They do not go through any external service.</p>
+    They do not go through any external service, and they start <strong>switched off</strong>:
+    you turn them on, and you choose what you want to be told about.</p>
 
     <h2>8. Children</h2>
     <p>The app is not directed at children and does not collect data from any user, whoever
